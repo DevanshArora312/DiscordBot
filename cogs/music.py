@@ -144,9 +144,12 @@ class Music(commands.Cog):
         Skips the current playing song and pops it form the queue
         '''
         if self.vc != None:
-            self.vc.stop()
+            if self.Playing:
+                self.vc.stop()
             self.if_skipped = True
             await ctx.send(f"Skipped ```{self.Queue.pop(0)[0]['title']}```")
+            self.Playing = False
+            self.Paused = False
             await self.play_music(ctx)
         
     @commands.command(name="join",help="")
@@ -197,6 +200,7 @@ class Music(commands.Cog):
         await self.vc.disconnect()
         self.Playing = False
         self.Paused = False
+        self.Queue = []
 
     @commands.Cog.listener()
     async def on_ready(self):
