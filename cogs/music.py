@@ -86,7 +86,7 @@ class Music(commands.Cog):
     async def play (self, ctx, *args):
         await ctx.send("play exec")
         query =" ".join(args)
-        #print("the query is --",query)
+        #print(f"the query is --[{query}]")
         voice_channel = ctx.author.voice.channel
         if voice_channel is None:
             await ctx.send("Connect to a voice channel!")
@@ -97,7 +97,7 @@ class Music(commands.Cog):
             if type (song) == type (True):
                 await ctx.send("Could not download the song. Incorrect format, try a different keyword")
             else:
-                await ctx.send("Song added to the queue")
+                await ctx.send(f"Song added to the queue -- ```{song['title']}```")
 
                 self.Queue.append([song, voice_channel])
                 if self.Playing == False:
@@ -144,7 +144,7 @@ class Music(commands.Cog):
         if self.vc != None:
             self.vc.stop()
             self.if_skipped = True
-            await ctx.send(f"Skipped {self.Queue.pop(0)[0]['title']}")
+            await ctx.send(f"Skipped ```{self.Queue.pop(0)[0]['title']}```")
             await self.play_music(ctx)
         
     @commands.command(name="join",help="")
@@ -158,13 +158,18 @@ class Music(commands.Cog):
     @commands.command (name="queue", aliases=["q"], help="Displays all the songs currently in the queue")
     async def queue (self, ctx):
         '''
-        Prints the Queue of the songs-- upo 10 songs 
+        Prints the Queue of the songs-- upto 10 songs 
         '''
         retval = ""
+        
         for i in range(0, len(self.Queue)):
             if i > 10: break
-            retval += self.Queue[i][0]['title'] + '\n'
+            if i == 0:
+                retval += "1." + self.Queue[i][0]['title'] + '(Playing Now)' + '\n'
+            else:
+                retval += f"{i+1}." + self.Queue[i][0]['title'] + '\n'
         if retval != "":
+            retval = "```\n" +retval+ "```"
             await ctx.send(retval)
         else:
             await ctx.send("No music in the queue.")
