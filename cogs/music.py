@@ -92,6 +92,8 @@ class Music(commands.Cog):
             await ctx.send("Connect to a voice channel!")
         elif self.Paused and query == "":
             self.vc.resume ()
+            self.Paused = False
+            self.Playing = True
         else:
             song = self.search_yt (query)
             if type (song) == type (True):
@@ -100,7 +102,7 @@ class Music(commands.Cog):
                 await ctx.send(f"Song added to the queue -- ```{song['title']}```")
 
                 self.Queue.append([song, voice_channel])
-                if self.Playing == False:
+                if self.Playing == False and self.Paused == False:
                     await self.play_music(ctx)
 
 
